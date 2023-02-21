@@ -1,0 +1,104 @@
+name: sign_image
+
+on:
+  workflow_call:
+    inputs:
+      image_digest:
+        description: 'Fully-qualified image digest to verify (registry/image@sha256:digest)'
+        required: true
+        type: string
+      auth_provider:
+        description: 'OIDC provider ID'
+        required: true
+        type: string
+      auth_user:
+        description: 'OIDC user ID'
+        required: true
+        type: string
+      kms_key:
+        description: 'KMS key to use for signing'
+        required: true
+        type: string
+      cosign_version:
+        description: 'The version of cosign to use'
+        required: false
+        type: string
+        default: 'v1.13.1'
+      scan_severity:
+        description: 'Error on vulnerability scan severity'
+        required: false
+        type: string
+        default: 'CRITICAL,HIGH,MEDIUM'
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      id-token: write
+    steps:
+
+    - id: auth
+      name: Auth GCP
+      uses: google-github-actions/auth@ef5d53e30bbcd8d0836f4288f5e50ff3e086997d  # v1.0.0
+      with:
+        token_format: "access_token"
+        workload_identity_provider: ${{ inputs.auth_provider }}
+        service_account: ${{ inputs.auth_user }}
+
+    - name: Scan Image
+      uses: aquasecurity/trivy-action@8bd2f9fbda2109502356ff8a6a89da55b1ead252  # 0.9.1
+      with:
+        scan-type: image
+        security-checks: vuln
+        severity: ${{ inputs.scan_severity }}
+        image-ref: ${{ inputs.image_digest }}
+        format: sarif
+        output: trivy-results.sarif
+        hide-progress: true
+        timeout: "10m"
+        exit-code: "1"
+      env:
+        GOOGLE_APPLICATION_CREDENTIAL: ${{ steps.auth.outputs.access_token }}
+
+  sign:
+    needs:
+    - scan
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      id-token: write
+    steps:
+
+    - id: auth
+      name: Auth GCP
+      uses: google-github-actions/auth@ef5d53e30bbcd8d0836f4288f5e50ff3e086997d  # v1.0.0
+      with:
+        token_format: "access_token"
+        workload_identity_provider: ${{ inputs.auth_provider }}
+        service_account: ${{ inputs.auth_user }}
+
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@9becc617647dfa20ae7b1151972e9b3a2c338a2b  # v2.8.1
+      with:
+        cosign-release: ${{ inputs.cosign_version }}
+
+    - name: Auth Cosign
+      run: |
+        set -euo pipefail
+        cosign version
+        reg=$(echo ${{ inputs.image_digest }} | cut -d/ -f1)
+        cosign login ${reg} --username=oauth2accesstoken --password=${{ steps.auth.outputs.access_token }}
+
+    - name: Attest Image
+      run: |
+        set -euo pipefail
+        cosign sign ${{ inputs.image_digest }} \
+            --key ${{ inputs.kms_key }} \
+            -a sha=${{ github.sha }} \
+            -a run_id=${{ github.run_id }} \
+            -a run_attempt=${{ github.run_attempt }} \
+            -a tag=${GITHUB_REF#refs/*/}
