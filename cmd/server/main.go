@@ -10,9 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	server "github.com/taechae/s3cme/cmd/server/v1"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	server "github.com/taechae/s3cme/cmd/server/v1"
 )
 
 const (
