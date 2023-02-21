@@ -102,7 +102,7 @@ jobs:
             -a run_id=${{ github.run_id }} \
             -a run_attempt=${{ github.run_attempt }} \
             -a tag=${GITHUB_REF#refs/*/}
-            
+
   verify:
     needs:
     - sign
