@@ -1,4 +1,4 @@
-module github.com/mchmarny/s3cme
+module github.com/taechae/s3cme
 
 go 1.20
 

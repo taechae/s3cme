@@ -22,7 +22,7 @@ variable "location" {
 
 variable "git_repo" {
   description = "GitHub Repo"
-  default     = "mchmarny/s3cme"
+  default     = "taechae/s3cme"
   type        = string
   nullable    = false
 }
