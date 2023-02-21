@@ -13,10 +13,10 @@ jobs:
     env:
       # Update these based on the Setup output
       IMG_NAME: s3cme
-      KMS_KEY: gcpkms://projects/cloudy-s3c/locations/global/keyRings/s3cme-signer-ring/cryptoKeys/s3cme-signer/cryptoKeyVersions/1
-      PROVIDER_ID: projects/510441318314/locations/global/workloadIdentityPools/s3cme-github-pool/providers/github-provider
-      REG_URI: us-west1-docker.pkg.dev/cloudy-s3c/s3cme
-      SA_EMAIL: s3cme-github-actions-user@cloudy-s3c.iam.gserviceaccount.com
+      KMS_KEY: gcpkms://projects/s3c100/locations/global/keyRings/s3cme-signer-ring/cryptoKeys/s3cme-signer/cryptoKeyVersions/1
+      PROVIDER_ID: projects/293903250827/locations/global/workloadIdentityPools/s3cme-github-pool/providers/github-provider
+      REG_URI: us-west1-docker.pkg.dev/s3c100/s3cme
+      SA_EMAIL: s3cme-github-actions-user@s3c100.iam.gserviceaccount.com
 
       # Defaults
       BUILDER_VERSION: v1.4.0
