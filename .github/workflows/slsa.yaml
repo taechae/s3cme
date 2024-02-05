@@ -80,7 +80,7 @@ jobs:
 
     - id: auth
       name: Auth GCP
-      uses: google-github-actions/auth@ef5d53e30bbcd8d0836f4288f5e50ff3e086997d  # v1.0.0
+      uses: google-github-actions/auth@a6e2e39c0a0331da29f7fd2c2a20a427e8d3ad1f  # v2.1.1
       with:
         token_format: "access_token"
         workload_identity_provider: ${{ inputs.auth_provider }}
@@ -122,7 +122,7 @@ jobs:
 
     - id: auth
       name: Auth GCP
-      uses: google-github-actions/auth@ef5d53e30bbcd8d0836f4288f5e50ff3e086997d  # v1.0.0
+      uses: google-github-actions/auth@a6e2e39c0a0331da29f7fd2c2a20a427e8d3ad1f  # v2.1.1
       with:
         token_format: "access_token"
         workload_identity_provider: ${{ inputs.auth_provider }}
