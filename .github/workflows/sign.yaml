@@ -50,7 +50,7 @@ jobs:
         service_account: ${{ inputs.auth_user }}
 
     - name: Scan Image
-      uses: aquasecurity/trivy-action@8bd2f9fbda2109502356ff8a6a89da55b1ead252  # 0.9.1
+      uses: aquasecurity/trivy-action@6e7b7d1fd3e4fef0c5fa8cce1229c54b2c9bd0d8  # 0.24.0
       with:
         scan-type: image
         security-checks: vuln
